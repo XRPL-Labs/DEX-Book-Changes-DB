@@ -30,13 +30,16 @@ const persist = async book_changes => {
       return
     }
 
+    const ledger_info = await client.send({command: 'ledger', ledger_index: Number(book_changes.ledger_index) })
+    const ledger_close_time = ledger_info?.ledger?.close_time + 946684800
+
     if (book_changes.changes.length > 0) {
       // OK, store ledger
       console.log('   > Got book changes        @ ', book_changes.ledger_index, book_changes.changes.length)
-      persistBookChanges(book_changes.ledger_index, book_changes.changes)
+      persistBookChanges(book_changes.ledger_index, book_changes.changes, ledger_close_time)
     } else if (typeof book_changes?.ledger_hash === 'string' && book_changes?.ledger_time) {
       console.log('   > Got no book changes     @ ', book_changes.ledger_index)
-      flagLedgerAsFetched(book_changes.ledger_index, 0)
+      flagLedgerAsFetched(book_changes.ledger_index, 0, ledger_close_time)
     } else {
       console.log('   > Got unexpected response @ ', book_changes.ledger_index, '!!!!!!!!!!!!!!!!!!!')
     }

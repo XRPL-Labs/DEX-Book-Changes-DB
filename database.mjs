@@ -39,8 +39,8 @@ const hasLedger = async ledger => {
   return Array.isArray(ledgerLine) && ledgerLine.length > 0
 }
 
-const flagLedgerAsFetched = async (ledger, bookchanges = null) => {
-  query(`INSERT IGNORE INTO ledgers (ledger, bookchanges) VALUES (:ledger, :bookchanges)`, {ledger, bookchanges})
+const flagLedgerAsFetched = async (ledger, bookchanges = null, closed) => {
+  query(`INSERT IGNORE INTO ledgers (ledger, bookchanges, closed) VALUES (:ledger, :bookchanges, FROM_UNIXTIME(:closed))`, {ledger, bookchanges, closed})
 }
 
 const getMinLastKnownLedger = async () => {
@@ -51,7 +51,7 @@ const getMinLastKnownLedger = async () => {
   return null
 }
 
-const persistBookChanges = (ledger, changes) => {
+const persistBookChanges = (ledger, changes, closed) => {
   let changeCount = 0
   // console.log('INSERT', changes)
   if (Array.isArray(changes)) {
@@ -77,7 +77,7 @@ const persistBookChanges = (ledger, changes) => {
       changeCount++
     })
 
-    flagLedgerAsFetched(ledger, changes.length)
+    flagLedgerAsFetched(ledger, changes.length, closed)
   }
 }
 
