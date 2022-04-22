@@ -1,0 +1,19 @@
+{
+  "name": "book_changes",
+  "version": "1.0.0",
+  "description": "Fetch XRPL Book Changes with book_changes patch (1.8.5, Richard Holland, XRPL Labs)",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon .",
+    "pm2": "pm2 startOrReload pm2.config.js"
+  },
+  "author": "Wietse Wind <w@xrpl-labs.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "mysql": "^2.18.1",
+    "xrpl-client": "^1.9.4",
+    "pm2": "^5.2.0"
+  }
+}
