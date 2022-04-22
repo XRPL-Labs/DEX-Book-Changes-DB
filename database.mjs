@@ -40,7 +40,7 @@ const hasLedger = async ledger => {
 }
 
 const flagLedgerAsFetched = async (ledger, bookchanges = null, closed) => {
-  query(`INSERT IGNORE INTO ledgers (ledger, bookchanges, closed) VALUES (:ledger, :bookchanges, FROM_UNIXTIME(:closed))`, {ledger, bookchanges, closed})
+  query(`INSERT IGNORE INTO ledgers (ledger, bookchanges, closed) VALUES (:ledger, :bookchanges, :closed)`, {ledger, bookchanges, closed})
 }
 
 const getMinLastKnownLedger = async () => {
