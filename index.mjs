@@ -36,18 +36,20 @@ const persist = async book_changes => {
     if (book_changes.changes.length > 0) {
       // OK, store ledger
       console.log('   > Got book changes        @ ', book_changes.ledger_index, book_changes.changes.length)
-      persistBookChanges(book_changes.ledger_index, book_changes.changes, ledger_close_time)
+      await persistBookChanges(book_changes.ledger_index, book_changes.changes, ledger_close_time)
     } else if (typeof book_changes?.ledger_hash === 'string' && book_changes?.ledger_time) {
       console.log('   > Got no book changes     @ ', book_changes.ledger_index)
-      flagLedgerAsFetched(book_changes.ledger_index, 0, ledger_close_time)
+      await flagLedgerAsFetched(book_changes.ledger_index, 0, ledger_close_time)
     } else {
       console.log('   > Got unexpected response @ ', book_changes.ledger_index, '!!!!!!!!!!!!!!!!!!!')
     }
   }
+  return
 }
 
 client.on('message', message => {
   if (message?.changes && message?.type === 'bookChanges') {
+    console.log('Persist notified book change(s)', message?.changes?.length)
     persist(message)
   }
 })
@@ -77,8 +79,8 @@ console.log('Ready. Start listening/fetching.')
 
 if (backfill) {
   while (indexLedger > 32570) {
-    await Promise.all(Array(parallel).fill(0).map((v, i) => indexLedger - i).map(async fetchLedgerIndex => {
-      indexLedger--
+    const called = await Promise.all(Array(parallel).fill(0).map((v, i) => indexLedger - i).map(async fetchLedgerIndex => {
+      
 
       if (await hasLedger(fetchLedgerIndex)) {
         // Ledger alredy persisted
@@ -92,10 +94,12 @@ if (backfill) {
         ledger_index: Number(fetchLedgerIndex)
       })
 
-      persist(book_changes)
+      await persist(book_changes)
 
       return book_changes
     }))
+
+    indexLedger -= called.length
 
     console.log('Next round of #ledgers', parallel)
   }
