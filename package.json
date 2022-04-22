@@ -13,7 +13,10 @@
   "dependencies": {
     "dotenv": "^16.0.0",
     "mysql": "^2.18.1",
-    "xrpl-client": "^1.9.4",
+    "xrpl-client": "^1.9.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
     "pm2": "^5.2.0"
   }
 }
